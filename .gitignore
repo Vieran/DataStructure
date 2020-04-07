@@ -32,11 +32,11 @@
 *.app
 
 # VScode files
-.vscode/*
+**/.vscode/*
 
 # CMake files
-CMakeLists.txt
-build/*
+**/CMakeLists.txt
+**/build/*
 
 # my course homework
 Homework/*
