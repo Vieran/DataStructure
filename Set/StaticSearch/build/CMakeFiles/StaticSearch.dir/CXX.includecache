@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../Lib/Set.h
+iostream
+-
+
+D:/AllOfProgram/Code/Data_Structures/Set/StaticSearch/StaticSearch.cpp
+Set.h
+D:/AllOfProgram/Code/Data_Structures/Set/StaticSearch/Set.h
+
