@@ -1,3 +1,0 @@
-D:/AllOfProgram/Code/Data_Structures/Linear/Queue/build/CMakeFiles/edit_cache.dir
-D:/AllOfProgram/Code/Data_Structures/Linear/Queue/build/CMakeFiles/Queue.dir
-D:/AllOfProgram/Code/Data_Structures/Linear/Queue/build/CMakeFiles/rebuild_cache.dir
