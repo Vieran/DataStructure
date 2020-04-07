@@ -1,0 +1,12 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+D:/AllOfProgram/Code/Data_Structures/Set/DynamicSearch/DynamicSearch.cpp
+
+D:/AllOfProgram/Code/Data_Structures/Set/DynamicSearch/Lib/Small_Tricks.cpp
+
