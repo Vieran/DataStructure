@@ -1,0 +1,12 @@
+[
+{
+  "directory": "D:/AllOfProgram/Code/Data_Structures/Algorithm/build",
+  "command": "D:\\AllOfProgram\\Auxiliary\\MinGW-w64\\mingw64\\bin\\g++.exe   @CMakeFiles/Algorithm.dir/includes_CXX.rsp  -g -g   -o CMakeFiles\\Algorithm.dir\\Algorithm.cpp.obj -c D:\\AllOfProgram\\Code\\Data_Structures\\Algorithm\\Algorithm.cpp",
+  "file": "D:/AllOfProgram/Code/Data_Structures/Algorithm/Algorithm.cpp"
+},
+{
+  "directory": "D:/AllOfProgram/Code/Data_Structures/Algorithm/build",
+  "command": "D:\\AllOfProgram\\Auxiliary\\MinGW-w64\\mingw64\\bin\\g++.exe   @CMakeFiles/Algorithm.dir/includes_CXX.rsp  -g -g   -o CMakeFiles\\Algorithm.dir\\Lib\\Small_Tricks.cpp.obj -c D:\\AllOfProgram\\Code\\Data_Structures\\Algorithm\\Lib\\Small_Tricks.cpp",
+  "file": "D:/AllOfProgram/Code/Data_Structures/Algorithm/Lib/Small_Tricks.cpp"
+}
+]
