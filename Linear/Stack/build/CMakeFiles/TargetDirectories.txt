@@ -1,0 +1,3 @@
+D:/AllOfProgram/Code/Data_Structures/Linear/Stack/build/CMakeFiles/Stack.dir
+D:/AllOfProgram/Code/Data_Structures/Linear/Stack/build/CMakeFiles/edit_cache.dir
+D:/AllOfProgram/Code/Data_Structures/Linear/Stack/build/CMakeFiles/rebuild_cache.dir

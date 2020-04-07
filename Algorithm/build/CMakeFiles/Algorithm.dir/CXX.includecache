@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../Lib/Small_Trick.h
+
+D:/AllOfProgram/Code/Data_Structures/Algorithm/Algorithm.cpp
+iostream
+-
+Small_Trick.h
+D:/AllOfProgram/Code/Data_Structures/Algorithm/Small_Trick.h
+

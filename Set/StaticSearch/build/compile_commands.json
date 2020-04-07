@@ -1,0 +1,7 @@
+[
+{
+  "directory": "D:/AllOfProgram/Code/Data_Structures/Set/StaticSearch/build",
+  "command": "D:\\AllOfProgram\\Auxiliary\\MinGW-w64\\mingw64\\bin\\g++.exe   @CMakeFiles/StaticSearch.dir/includes_CXX.rsp  -g -g   -o CMakeFiles\\StaticSearch.dir\\StaticSearch.cpp.obj -c D:\\AllOfProgram\\Code\\Data_Structures\\Set\\StaticSearch\\StaticSearch.cpp",
+  "file": "D:/AllOfProgram/Code/Data_Structures/Set/StaticSearch/StaticSearch.cpp"
+}
+]
