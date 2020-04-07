@@ -37,3 +37,6 @@
 # CMake files
 CMakeLists.txt
 build/*
+
+# my course homework
+Homework/*
