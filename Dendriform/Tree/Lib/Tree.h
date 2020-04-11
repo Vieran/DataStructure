@@ -16,6 +16,7 @@ public:
     virtual elemType child(elemType x,int i,elemType flag) const = 0;//寻找x的第i个子节点的值；如果树空则返回特殊值
     virtual void remove(elemType x,int i) = 0;//删除节点x的第i颗子树
     virtual void traverse() const = 0;//遍历整棵树访（问每一个节点一次）
+    virtual ~Tree() = 0;//漏了的析构函数
 };
 
 
