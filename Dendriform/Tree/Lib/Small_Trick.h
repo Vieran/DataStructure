@@ -1,10 +1,9 @@
-#ifndef SMALL_TRICK_H
-#define SAMLL_TRICK_H
-
 #include <iostream>
 #include <string>
 using namespace std;
 
+#ifndef SMALL_TRICK_H
+#define SAMLL_TRICK_H
 //表达式树的定义
 class Calc
 {

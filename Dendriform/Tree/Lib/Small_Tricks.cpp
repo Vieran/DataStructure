@@ -60,7 +60,7 @@ Calc::Type Calc::getToken(char *&s,int &data)
         data = 0;
         while (*s>='0' && *s<='9')//一直取运算数，直到非运算数
         {
-            data = data*10+*s-'0';
+            data = data*10+*s-'0';//将字符转化为int类型
             ++s;
         }
         return DATA;
