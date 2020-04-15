@@ -114,7 +114,10 @@ public:
     {
         return flag;
     }
- 
+
+    void NpreOrder() const;
+    void NmidOrder() const;
+    void NpostOrder() const;
 };
 
 //返回根节点的值
