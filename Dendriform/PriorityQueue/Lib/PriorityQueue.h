@@ -1,4 +1,5 @@
 //优先级队列类的定义
+//最小化堆
 
 #ifndef PRIORITYQUEUE_H
 #define PRIORITYQUEUE_H
@@ -39,14 +40,14 @@ public:
         return array[1];
     }
 };
-
+#endif
 
 //构造函数
 template <class elemType>
 PriorityQueue<elemType>::PriorityQueue(int capacity)//函数定义的时候，不能将默认值写出？！
 {
-    array = new elemType[capacity];
-    maxSize = capacity;
+    array = new elemType[capacity];//用数组存储，因为是完全二叉树
+    maxSize = capacity;//初始化数组大小
     currentSize = 0;
 }
 
@@ -55,7 +56,7 @@ template <class elemType>
 void PriorityQueue<elemType>::enQueue(const elemType &x)
 {
     if(currentSize==maxSize-1)//检查是否存在可用位置
-        doubleSpace();
+        doubleSpace();//如果空间不够则扩容
     
     //向上过滤
     int hole = ++currentSize;//申请下一个可用节点
@@ -79,17 +80,19 @@ elemType PriorityQueue<elemType>::deQueue()
 template <class elemType>
 void PriorityQueue<elemType>::percolateDown(int hole)
 {
-    int child;//左右子节点中的较小者的下标
-    elemType tmp = array[hole];//将空节点的值保存在变量tmp中
+	int child;//左右子节点中的较小者的下标（因为成为父节点必须要比另外一个子节点小）
+    elemType tmp = array[hole];//将需要调整位置的值保存在变量tmp中
 
     //向下过滤
-    while (hole*2<=currentSize)//从当前节点开始，逐层向下过滤，直到空节点的子节点不存在
+    while (hole*2<=currentSize)//从当前节点开始，逐层向下过滤
     {
-        child = hole*2;//找到空节点的左子节点，将其存入child变量
-        if(child!=currentSize && array[child+1]<array[child])//检查右子节点是否存在，是否小于左子节点
+        child = hole*2;//找到当前节点的左子节点，将其值存入child变量
+		
+        if(child!=currentSize && array[child+1]<array[child])//比较左右子节点，筛选出较小的子节点
             child++;//是则将下标保存于child变量
-        if(array[child]<tmp)//判断较小的子节点是否小于tmp值
-            array[hole] = array[child];//是则将空节点下移
+
+        if(array[child]<tmp)//判断较小的子节点是否小于需要调整位置的值
+            array[hole] = array[child];//调节当前父节点和子节点的位置
         else//否则当前空节点是合适的位置
             break;
         
@@ -98,11 +101,11 @@ void PriorityQueue<elemType>::percolateDown(int hole)
     array[hole] = tmp;//将tmp的值放入空节点
 }
 
-//构造堆
+//对已经给定数据的堆进行排序
 template <class elemType>
 void PriorityQueue<elemType>::buildHeap()
 {
-    for(int i=currentSize/2;i>0;i--)
+    for(int i=currentSize/2;i>0;i--)//从最后一个非叶子节点开始，这样每次使用向下过滤的时候，都可以直接使用percolateDown函数
         percolateDown(i);//使堆有序
 }
 
@@ -128,5 +131,3 @@ void PriorityQueue<elemType>::doubleSpace()
     delete [] tmp;
 }
 
-
-#endif

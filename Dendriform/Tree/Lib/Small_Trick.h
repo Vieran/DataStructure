@@ -59,11 +59,13 @@ private:
         int weight;//节点的权值
         int parent,left,right;//父节点及左右子节点的下标地址
     };
+	//鉴于哈夫曼树需要从子节点寻找父节点，又需要知道是父节点的左or右子节点，所以采用这种存储的方法
 
     node *elem;//数组的起始地址
     int length;//数组规模
     
 public:
+	//由于用户调用getCode的时候，需要传递一个hfCode数组，所以必须定义为公有的结构体
     struct hfCode//保存哈夫曼编码的类
     {
         elemType data;//待编码的字符
@@ -79,29 +81,30 @@ public:
 };
 
 //参数：待编码的符号，符号对应的权值，数组的规模(前两个数组的规模相同)
+//构造一棵哈夫曼树
 template <class elemType>
 hfTree<elemType>::hfTree(const elemType *v,const int *w,int size)
 {
     //置初值
-    length = 2*size;
-    elem = new node[length];//申请保存哈夫曼树的数组（下标为0的地方不存放任何东西）
+    length = 2*size;//2n-1个结点，但是0下标不放置元素，所以申请2n
+    elem = new node[length];//由于哈夫曼树的结点个数一定（2n-1），所以直接申请所有的存储空间
     for (int i = size; i < length; ++i)//赋初值
     {
-        elem[i].weight = w[i-size];//将符号和对应的权值放在数组的后半部分
+        elem[i].weight = w[i-size];//将元素和对应的权值放在数组的n~2n-1的下标中
         elem[i].data = v[i-size];
         elem[i].parent = elem[i].left = elem[i].right = 0;//将父节点、左右子节点的下标都设置为0
     }
 
     //归并森林中的树
-    const int MAX_INT = 32767;
+    const int MAX_INT = 32767;//这个数值和int类型的范围有关
     int min1,min2;//最小树、次最小树的权值
     int x,y;//最小树、次小树的下标
-    for (int i = size-1; i > 0; --i)
+    for (int i = size-1; i > 0; --i)//size是元素个数，此处i是数组没有存放元素的最后一个位置的下标
     {
         min1 = min2 = MAX_INT;
         x = y = 0;
-        for (int j = i+1; j < length; ++j)//逐个遍历，找出最小的树，并归并
-            if(elem[j].parent==0)
+        for (int j = i+1; j < length; ++j)//从元素开始出现的位置开始，逐个遍历，找出待归并的树中的最小and次小
+            if(elem[j].parent==0)//父节点下标为0，表示这个元素是待归并的
                 if (elem[j].weight<min1)//元素j最小
                 {
                     min2 = min1;//改变次小值
@@ -120,28 +123,29 @@ hfTree<elemType>::hfTree(const elemType *v,const int *w,int size)
         elem[i].weight = min1+min2;
         elem[i].left = x;
         elem[i].right = y;
-        elem[i].parent = 0;
-        elem[x].parent = i;
-        elem[y].parent = i;
+        elem[i].parent = 0;//表示这个结点成为待归并结点
+        elem[x].parent = i;//表示这个结点是已归并结点
+        elem[y].parent = i;//表示这个结点是已归并结点
     }
 }
 
 
-//找出所有叶节点的哈夫曼编码，放在参数result中
+//根据哈夫曼树生成叶节点的哈夫曼编码，放在参数result中
+//返回一个数组，数组的每一个元素是一个符号和对应的编码
 template <class elemType>
 void hfTree<elemType>::getCode(hfCode result[])
 {
-    int size = length/2;
-    int p,s;//s是追溯过程中处理的节点，p是s的父节点下标
+    int size = length/2;//获得元素存储的下标的开始
+    int p,s;//s是追溯过程中处理的节点下标，p是s的父节点下标
 
     //对每个待编码的符号向根追溯
     for (int i = size; i < length; ++i)
     {
         result[i-size].data = elem[i].data;
-        result[i-size].code = "";
+        result[i-size].code = "";//初始化一个空的编码字符串
         p = elem[i].parent;
         s = i;
-        while (p)
+        while (p)//只要不是0，都会继续循环（因为必须回溯到根节点，而根节点的parent是0）
         {
             if(elem[p].left==s)//当前节点是父节点的左孩子，则编码字符串前添加0
                 result[i-size].code = '0'+result[i-size].code;//string类的+操作表示字符串的拼接！
