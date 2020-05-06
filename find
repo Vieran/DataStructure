@@ -1,0 +1,99 @@
+
+#include <iostream>
+using namespace std;
+
+//获取下标是current的字符串的前一个有效字符的下标
+int fectchpre(int current, char *str)
+{
+    int pre = current - 1;
+    while (pre >= 0)
+    {
+        if (str[pre] == '0' || str[pre] == '1')
+            return pre;
+        pre--;
+    }
+    return -1;
+}
+
+//获取下标是current的字符串的后一个有效字符的下标
+int fectchnext(int current, char *str)
+{
+    int next = current + 1;
+    while (str[next] != '\0')
+    {
+        if (str[next] == '0' || str[next] == '1')
+            return next;
+        next++;
+    }
+    return -1;
+}
+
+int main()
+{
+    char str[100001];
+    //获取字符串，并计算数量
+    cin.getline(str, 100000);
+
+    int length = 0; //记录字符串的长度
+    while (str[length] != '\0')
+        length++;
+
+    //对字符串进行处理
+    int pre, next;    //下标是i的字符的前一个和后一个有效字符的下标
+    bool flag = true; //记录每一次循环是否出现更改
+    while (flag)
+    {
+        flag = false;
+        for (int i = 0; i < length; i++)
+        {
+            while (str[i] != '0' && str[i] != '1')
+            {
+                ++i;
+                if (i > length)
+                    break;
+            }
+            if (i > length)
+                break;
+
+            pre = fectchpre(i, str);
+            next = fectchnext(i, str);
+
+            //两个都是0
+            if (pre != -1 && str[pre] == '0' && str[i] == '0')
+            {
+                str[pre] = '2';
+                str[i] = '1';
+                flag = true;
+            }
+            if (next != -1 && str[next] == '0' && str[i] == '0')
+            {
+                str[next] = '1';
+                str[i] = '2';
+                flag = true;
+            }
+
+            //两个都是1
+            if (pre != -1 && str[pre] == '1' && str[i] == '1')
+            {
+                str[pre] = '2';
+                str[i] = '2';
+                flag = true;
+            }
+            if (next != -1 && str[next] == '1' && str[i] == '1')
+            {
+                str[next] = '2';
+                str[i] = '2';
+                flag = true;
+            }
+        }
+    }
+
+    //输出
+    for (int i = 0; i < length; i++)
+    {
+        if (str[i] == '0' || str[i] == '1')
+            printf("%c", str[i]);
+    }
+
+    return 0;
+}
