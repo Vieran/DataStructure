@@ -64,6 +64,7 @@ void BinarySearchTree<KEY,OTHER>::insert(const Set<KEY,OTHER> &x)
     insert(x,root);
 }
 
+//插入的一定是叶子节点
 template <class KEY,class OTHER>
 void BinarySearchTree<KEY,OTHER>::insert(const Set<KEY,OTHER> &x,BinaryNode *&t)
 {
@@ -91,24 +92,25 @@ void BinarySearchTree<KEY,OTHER>::remove(const KEY &x,BinaryNode *&t)
     if(t==NULL)
         return;
     
-    if(x < t->data.key)
+    if(x < t->data.key)//继续查找
         remove(x,t->left);
     else
-        if(x > t->data.key)
+        if(x > t->data.key)//继续查找
             remove(x,t->right);
-        else//不大于也不小于则必等于
+        else//不大于也不小于则必等于，找到了
             if (t->left!=NULL && t->right!=NULL)//左右子树都存在
             {
                 BinaryNode *tmp = t->right;
-                while(tmp->left!=NULL)//寻找替身
-                    tmp = tmp->left;
+                while(tmp->left!=NULL)//寻找替身（右子树中最小的一个）
+                    tmp = tmp->left;//小的只能是在左子树上
                 t->data = tmp->data;//将替身移动到被删除节点的位置
-                remove(t->data.key,t->right);//删除替身
+                remove(t->data.key,t->right);//删除替身（此替身最多只有一棵子树）
+                //此处为什么不直接传递tmp去删除呢？删除必须要有父节点在，否则会出现野指针，但是寻找tmp的过程中并没有保存它的父节点
             }
             else
             {//被删除节点是叶节点或者只有一个子节点
                 BinaryNode *oldNode = t;
-                t = (t->left!=NULL) ? t->left : t->right;
+                t = (t->left!=NULL) ? t->left : t->right;//直接把子树/NULL挂到父节点上（替代被删节点）
                 delete oldNode;
             }            
 }

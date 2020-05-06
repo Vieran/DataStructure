@@ -2,7 +2,9 @@
 
 #include "Graph.h"
 #include "linkQueue.h"
+#include "DisjointSet.h"
 #include <iostream>
+#include <queue>
 using namespace std;
 
 #ifndef ADJLISTGRAPH_H
@@ -83,6 +85,10 @@ public:
 
     //欧拉回路(对外公开的接口)
     void EulerCircuit(TypeOfVer start);
+
+    //最小生成树
+    void kruskal() const;
+    void prim(TypeOfEdge noEdge) const;
 };
 
 #endif
@@ -397,55 +403,164 @@ template <class TypeOfVer, class TypeOfEdge>
 void adjListGraph<TypeOfVer, TypeOfEdge>::criticalPath() const
 {
     //找出拓扑序列，放入数组top
-    int *inDegree = new int[this->Vers],*top = new int[this->Vers];//top保存拓扑序列
-    for (int i = 0; i < this->Vers; ++i)//计算每个结点的入度
+    int *inDegree = new int[this->Vers], *top = new int[this->Vers]; //top保存拓扑序列
+    for (int i = 0; i < this->Vers; ++i)                             //计算每个结点的入度
     {
         inDegree[i] = 0;
-        for(edgeNode *p=verList[i].head;p!=NULL;p = p->next)
+        for (edgeNode *p = verList[i].head; p != NULL; p = p->next)
             ++inDegree[p->end];
     }
 
     //将入度为0的结点入队
     linkQueue<int> q;
-    for(int i= 0;i < this->Vers;++i)
-        if(inDegree[i]==0)
+    for (int i = 0; i < this->Vers; ++i)
+        if (inDegree[i] == 0)
             q.enQueue(i);
-    
-    int k=0;
+
+    int k = 0;
     while (!q.isEmpty())
     {
         top[k] = q.deQueue();
-        for(edgeNode *p = verList[top[k]].head;p!=NULL;p = p->next)
-            if(--inDegree[p->end]==0)
+        for (edgeNode *p = verList[top[k]].head; p != NULL; p = p->next)
+            if (--inDegree[p->end] == 0)
                 q.enQueue(p->end);
         ++k;
     }
-    
+
     //找最早发生时间
     TypeOfEdge *ee = new TypeOfEdge[this->Vers];
-    for(int i= 0;i < this->Vers;++i)
+    for (int i = 0; i < this->Vers; ++i)
         ee[i] = 0;
     for (int i = 0; i < this->Vers; ++i)
     {
-        for(edgeNode *p=verList[top[i]].head;p!=NULL;p = p->next)
-            if(ee[p->end] < ee[top[i]]+p->weight)
-                ee[p->end] = ee[top[i]]+p->weight;
+        for (edgeNode *p = verList[top[i]].head; p != NULL; p = p->next)
+            if (ee[p->end] < ee[top[i]] + p->weight)
+                ee[p->end] = ee[top[i]] + p->weight;
     }
 
     //找最晚发生时间
     TypeOfEdge *le = new TypeOfEdge[this->Vers];
-    for(int i= 0;i < this->Vers;++i)
+    for (int i = 0; i < this->Vers; ++i)
         le[i] = 0;
-    for (int i = this->Vers-1; i >= 0; --i)
+    for (int i = this->Vers - 1; i >= 0; --i)
     {
-        for(edgeNode *p=verList[top[i]].head;p!=NULL;p = p->next)
-            if(le[p->end]-p->weight< le[top[i]])
-                le[top[i]] = le[p->end]-p->weight;
+        for (edgeNode *p = verList[top[i]].head; p != NULL; p = p->next)
+            if (le[p->end] - p->weight < le[top[i]])
+                le[top[i]] = le[p->end] - p->weight;
     }
-    
-    //找出关键路径
-    for(int i = 0; i< this->Vers;++i)
-        if(le[top[i]] == ee[top[i]])
-            cout << "(" << verList[top[i]].ver << "," << ee[top[i]] << ")";
 
+    //找出关键路径
+    for (int i = 0; i < this->Vers; ++i)
+        if (le[top[i]] == ee[top[i]])
+            cout << "(" << verList[top[i]].ver << "," << ee[top[i]] << ")";
+}
+
+/*----------------------------------------------------------最小生成树的实现------------------------------------------------------------------------*/
+
+//Kruskal算法
+template <class TypOfVer, class TypeOfEdge>
+void adjListGraph<TypOfVer, TypeOfEdge>::kruskal() const
+{
+    //存储一个图的另外一种结构
+    struct edgeKruskal
+    {
+        int beg, end;                        //一条边的起止点
+        TypeOfEdge w;                        //边的权值
+        bool operator<(const edgeKruskal &rp) const //重载比较边的权值大小的运算符
+        {
+            return w < rp.w;
+        }
+    };
+
+    DisjointSet ds(Vers); //构建一个有节点数个元素的并查集
+
+    //生成优先级队列
+    priority_queue<edgeKruskal> pq; //优先级队列
+    edgeNode *p;             //原有的图的元素结构
+    for (int i = 0; i < Vers; i++)
+    {
+        for (p = verList[i].head; p != NULL; p = p->next)
+            if (i < p->end)//为了实现每条边只保存一次，只有当每条边的终节点的下标小于起始节点才保存
+            {
+                e.beg = i;//将起始节点下标保存
+                e.end = p->end;//将终点下标保存
+                e.w = p->weight;//保存该边的权值
+                pq.enQueue(e);//将边入队
+            }
+    }
+
+    //开始归并
+    int edgesAccepted = 0; //接受的边的条数
+    int u, v;
+    edgeKruskal e;                          //特殊存储结构的图
+    while (edgesAccepted < Vers - 1) //最终的边数等于节点数-1
+    {
+        e = pq.deQueue();//取出权值最小的边
+
+        //对边的起止点进行搜寻，看看加入边十分会出现回路
+        u = ds.Find(e.beg);
+        v = ds.Find(e.end);
+
+        if (u != v)//没有出现回路，将边加入
+        {
+            edgesAccepted++;//边数+1
+            ds.Union(u, v);//将两个节点所在的集合合并
+            cout << '(' << verList[e.beg] << ',' << verList[e.end] << ")\t";//输出加入的边的信息
+        }
+    }
+}
+
+//Prim算法
+template <class TypOfVer, class TypeOfEdge>//此函数中以U为已经加入的点的集合，以V为全部点的集合
+void adjListGraph<TypOfVer, TypeOfEdge>::prim(TypeOfEdge noEdge) const
+{
+    //专门用于Prim算法（主要服务于表示边的最小权值的数组，数组的下标表示节点的编号）
+    struct edgePrim
+    {
+        TypeOfEdge lowestCost;//从U到V-U的边的权值最小值
+        int startNode;//该最小权值的边的起始节点下标
+    };
+
+    edgePrim *prim=new edgePrim[Vers];//初始构建的数组个数和节点数相同
+    bool *flag = new bool[Vers];//对应的下标为true表示节点已经加入
+
+    for (int i = 0; i < Vers; i++)
+    {
+        flag[i] = false;//所有节点都未加入
+        prim[i].lowestCost = noEdge;//初始化边的权值为无穷大
+    }
+
+    edgeNode *p;//每个节点的边指向的另一端
+    TypeOfEdge min;//边的权值的最小值
+    int start=0;//start是开始节点的下标，这里准备将第一个元素加入到U
+    for (int i = 0; i < Vers; i++)
+    {
+        for (p = verList[start].head; p != NULL; p = p->next)//寻找节点i的所有边
+        {
+            //边的另一个端点在V-U中，且该边的权值小于已经录入的权值，也即需要更新prim[i]
+            if (!flag[p->end] && prim[p->end].lowestCost > p->weight)
+            {
+                prim[p->end].lowestCost = p->weight;
+                prim[p->end].startNode = start;
+            }
+
+            flag[start] = true;//在更新完成后，将节点加入
+
+            //在整个prim表格里面寻找下一个需要加入的节点
+            min = noEdge;
+            for (int j = 0; j < Vers; ++j)//寻找权值最小的边
+                if (prim[j].lowestCost < min)
+                {
+                    min = prim[j].lowestCost;
+                    start = j;//更新开始节点
+                }
+            
+            //输出本次连接的两个端点的值（端点的编号就是[]里的）
+            cout << '(' << verList[prim[start].startNode].ver << ',' << verList[start].ver << ")\t";
+            prim[start].lowestCost = noEdge;//将已经被加入的节点的值设为无穷大
+        }
+
+        delete[] flag;
+        delete[] prim;
+    }
 }
