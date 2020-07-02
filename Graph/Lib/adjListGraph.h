@@ -653,7 +653,7 @@ void adjListGraph<TypeOfVer, TypeOfEdge>::Dijkstra(TypeOfVer start, TypeOfEdge n
     {
         min = noEdge;
 
-        for (j = 0; j < Vers; j++)
+        for (j = 0; j < Vers; j++)//课堂讨论，此处是大于0？
             if (!known[j] && distance[j] < min)
             {
                 min = distance[j];
